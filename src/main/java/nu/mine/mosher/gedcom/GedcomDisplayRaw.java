@@ -2,10 +2,7 @@ package nu.mine.mosher.gedcom;
 
 import org.fusesource.jansi.AnsiConsole;
 
-import java.io.BufferedReader;
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -19,20 +16,21 @@ import java.util.concurrent.atomic.AtomicInteger;
 class GedcomDisplayRaw {
     private static final int INDENTATION = 4;
 
-    public static void main(final String... args) {
+    public static void main(final String... args) throws IOException {
+        System.setProperty("jansi.force", Boolean.TRUE.toString());
         AnsiConsole.systemInstall();
 
-        final BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(FileDescriptor.in), StandardCharsets.UTF_8));
-
-        final AtomicInteger plev = new AtomicInteger(-1);
-        in.lines().map(line -> {
-            final ParsedLine p = new ParsedLine(line, plev.get());
-            final int nextLevel = p.getLevel();
-            if (nextLevel >= 0) {
-                plev.set(nextLevel);
-            }
-            return p.toAnsiString(INDENTATION);
-        }).forEachOrdered(System.out::println);
+        try (final BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(FileDescriptor.in), StandardCharsets.UTF_8))) {
+            final AtomicInteger plev = new AtomicInteger(-1);
+            in.lines().map(line -> {
+                final ParsedLine p = new ParsedLine(line, plev.get());
+                final int nextLevel = p.getLevel();
+                if (nextLevel >= 0) {
+                    plev.set(nextLevel);
+                }
+                return p.toAnsiString(INDENTATION);
+            }).forEachOrdered(System.out::println);
+        }
 
         System.out.flush();
         System.err.flush();
