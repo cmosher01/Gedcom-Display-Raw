@@ -41,7 +41,7 @@ class ParsedLine {
 
     private static Pattern PATTERN2 = Pattern.compile(PATTERN_STRING2);
 
-    private static final int MAX_INDENTATION = 20;
+    private static final int MAX_INDENTATION = 45;
     private static final String INDENTER = " ";
     private static final int INVALID_LEVEL = -9999;
 
@@ -166,45 +166,44 @@ class ParsedLine {
     }
 
     public String toAnsiString(final int indentation) {
-        Ansi a = ansi();
+        final Ansi a = ansi();
 
-        a = a.a(safeIndent(indentation));
+        a.a(safeIndent(indentation));
 
-        if (this.matches && levelIsValid()) {
-            a = aSpace0(a);
-            a = aLevel(a);
-            a = aSpace1(a);
-            a = aId(a);
-            a = aSpaceid(a);
-            a = aTag(a);
-            a = aSpace2(a);
-            a = aSpace3(a);
-            a = aValue(a);
-            a = aSpace4(a);
+        if (this.blank) {
+            a.bg(RED).a("[BLANK-LINE]");
+        } else if (this.matches && levelIsValid()) {
+            aSpace0(a);
+            aLevel(a);
+            aSpace1(a);
+            aId(a);
+            aSpaceid(a);
+            aTag(a);
+            aSpace2(a);
+            aSpace3(a);
+            aValue(a);
+            aSpace4(a);
         } else {
-            a = a.bg(RED).a(this.unparsed);
+            a.bg(RED).a(this.unparsed);
         }
 
         return a.reset().toString();
     }
 
-    private Ansi aId(Ansi a) {
-        a = a.fg(YELLOW);
-        a = a.a(this.id);
-        return a.reset();
+    private void aId(Ansi a) {
+        a.fg(YELLOW).a(this.id).reset();
     }
 
-    private Ansi aValue(Ansi a) {
+    private void aValue(Ansi a) {
         if (this.valueIsPointer) {
-            a = a.fg(YELLOW);
-            a = a.a(this.value);
+            a.fg(YELLOW).a(this.value);
         } else {
-            a = hiliteNonAscii(a, this.value);
+            hiliteNonAscii(a, this.value);
         }
-        return a.reset();
+        a.reset();
     }
 
-    private static Ansi hiliteNonAscii(Ansi a, final String s) {
+    private static void hiliteNonAscii(Ansi a, final String s) {
         s.codePoints().forEach(c -> {
             if (/*c==' ' ||*/ c=='"' || c=='\'' || c=='-' || c=='@' || c=='\\' || c=='^' || c=='`' || c=='|' || c=='~') {
                 a.fg(BLACK).bg(YELLOW).a((char)c).reset();
@@ -214,77 +213,68 @@ class ParsedLine {
                 a.fg(BLACK).bg(GREEN).a("<").a(Character.getName(c)).a(">").reset();
             }
         });
-        return a.reset();
+        a.reset();
     }
 
-    private Ansi aTag(Ansi a) {
-        a = a.bold();
+    private void aTag(Ansi a) {
+        a.bold();
         if (this.tag.startsWith("_")) {
-            a = a.fg(GREEN);
+            a.fg(GREEN);
         } else if (this.gedcom551tag) {
-            a = a.fg(MAGENTA);
+            a.fg(MAGENTA);
         } else if (this.tag.isEmpty()) {
-            a = a.bg(RED).a("[MISSING TAG]");
+            a.bg(RED).a("[MISSING TAG]");
         } else {
-            a = a.bg(RED);
+            a.bg(RED);
         }
-        a = a.a(this.tag);
-        return a.reset();
+        a.a(this.tag).reset();
     }
 
-    private Ansi aLevel(Ansi a) {
-        a = a.fg(CYAN);
-        a = a.a(this.level);
-        return a.reset();
+    private void aLevel(Ansi a) {
+        a.fg(CYAN).a(this.level).reset();
     }
 
-    private Ansi aSpace0(Ansi a) {
+    private void aSpace0(Ansi a) {
         if (!this.space0.isEmpty()) {
-            a = a.bg(RED);
+            a.bg(RED);
         }
-        a = a.a(this.space0);
-        return a.reset();
+        a.a(this.space0).reset();
     }
-    private Ansi aSpace1(Ansi a) {
+    private void aSpace1(Ansi a) {
         if (this.space1.length() != 1) {
-            a = a.bg(RED);
+            a.bg(RED);
         }
         if (this.space1.isEmpty()) {
-            a = a.a("[MISSING-SPACE]");
+            a.a("[MISSING-SPACE]");
         }
-        a = a.a(this.space1);
-        return a.reset();
+        a.a(this.space1).reset();
     }
-    private Ansi aSpaceid(Ansi a) {
+    private void aSpaceid(Ansi a) {
         if (this.spaceid.length() != 1) {
-            a = a.bg(RED);
+            a.bg(RED);
         }
         if (!this.id.isEmpty() && this.spaceid.isEmpty()) {
-            a = a.a("[MISSING-SPACE]");
+            a.a("[MISSING-SPACE]");
         }
-        a = a.a(this.spaceid);
-        return a.reset();
+        a.a(this.spaceid).reset();
     }
-    private Ansi aSpace2(Ansi a) {
+    private void aSpace2(Ansi a) {
         if (this.space2.length() != 1 || this.value.isEmpty()) {
-            a = a.bg(RED);
+            a.bg(RED);
         }
-        a = a.a(this.space2);
-        return a.reset();
+        a.a(this.space2).reset();
     }
-    private Ansi aSpace3(Ansi a) {
+    private void aSpace3(Ansi a) {
         if (!this.space3.isEmpty()) {
-            a = a.bg(RED);
+            a.bg(RED);
         }
-        a = a.a(this.space3);
-        return a.reset();
+        a.a(this.space3).reset();
     }
-    private Ansi aSpace4(Ansi a) {
+    private void aSpace4(Ansi a) {
         if (!this.space4.isEmpty()) {
-            a = a.bg(RED);
+            a.bg(RED);
         }
-        a = a.a(this.space4);
-        return a.reset();
+        a.a(this.space4).reset();
     }
 
     private String safeIndent(int ind) {
