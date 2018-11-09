@@ -1,7 +1,7 @@
 repositories {
     mavenCentral()
     maven {
-        url 'http://mosher.mine.nu/nexus/repository/maven-public/'
+        url 'https://mosher.mine.nu/nexus/repository/maven-public/'
     }
 }
 
