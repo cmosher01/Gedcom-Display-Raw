@@ -277,7 +277,7 @@ class ParsedLine {
         a.a(this.space4).reset();
     }
 
-    private String safeIndent(int ind) {
+    public String safeIndent(int ind) {
         int lev = this.level;
         if (lev < 0) {
             lev = this.expectedPreviousLevel;
