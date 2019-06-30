@@ -1,18 +1,16 @@
-repositories {
-    mavenCentral()
-    maven {
-        url 'https://mosher.mine.nu/nexus/repository/maven-public/'
-    }
-}
-
 apply plugin: 'java'
 apply plugin: 'application'
 
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
 dependencies {
-    compile group: 'nu.mine.mosher.mopper', name: 'mopper', version: 'latest.integration'
-    compile group: 'org.fusesource.jansi', name: 'jansi', version: 'latest.integration'
+    implementation group: 'nu.mine.mosher.mopper', name: 'mopper', version: 'latest.integration'
+    implementation group: 'org.fusesource.jansi', name: 'jansi', version: 'latest.integration'
 }
 
 group = 'nu.mine.mosher.gedcom'
-version = '1.0.0-SNAPSHOT'
 mainClassName = 'nu.mine.mosher.gedcom.GedcomDisplayRaw'
+version = '1.0.0-SNAPSHOT'
