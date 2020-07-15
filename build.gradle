@@ -6,6 +6,10 @@ repositories {
     jcenter()
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+}
+
 dependencies {
     implementation group: 'nu.mine.mosher.mopper', name: 'mopper', version: 'latest.integration'
     implementation group: 'org.fusesource.jansi', name: 'jansi', version: 'latest.integration'

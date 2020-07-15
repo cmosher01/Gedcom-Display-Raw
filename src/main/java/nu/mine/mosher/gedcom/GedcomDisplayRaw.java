@@ -18,7 +18,7 @@ import static org.fusesource.jansi.Ansi.ansi;
  * Input GEDCOM file is assumed UTF-8.
  */
 class GedcomDisplayRaw {
-    private static final int INDENTATION = 4;
+    private static final int INDENTATION = 5;
 
     public static void main(final String... args) throws IOException {
         System.setProperty("jansi.force", Boolean.TRUE.toString());
